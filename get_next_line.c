@@ -46,7 +46,7 @@ char	*get_line(t_list *list)
 
 	if (!list)
 		return (0);
-	str_len = len_to_newline(list);
+	str_len = len_to_new_line(list);
 	next_str = (char *)malloc((str_len + 1) * sizeof(char));
 	if (!next_str)
 		return (0);

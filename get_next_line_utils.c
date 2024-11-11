@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-int	found_newline(t_list *list)
+int	found_new_line(t_list *list)
 {
 	int	i;
 
