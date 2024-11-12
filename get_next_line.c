@@ -39,7 +39,7 @@ void	polish_list(t_list **list)
 	dealloc(list, clean_node, buf);
 }
 
-char	*get_line(t_list *list)
+char	*get_line_db(t_list *list)
 {
 	int		str_len;
 	char	*next_str;
@@ -102,7 +102,7 @@ char	*get_next_line(int fd)
 	create_list(&list, fd);
 	if (!list)
 		return (0);
-	next_line = get_line(list);
+	next_line = get_line_db(list);
 	polish_list(&list);
 	return (next_line);
 }

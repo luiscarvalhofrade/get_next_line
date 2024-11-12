@@ -27,7 +27,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-char	*get_line(t_list *list);
+char	*get_line_db(t_list *list);
 char	*get_next_line(int fd);
 
 int		found_new_line(t_list *list);
