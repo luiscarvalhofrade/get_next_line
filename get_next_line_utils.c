@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: luide-ca <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/11 13:11:06 by luide-ca          #+#    #+#             */
-/*   Updated: 2024/11/11 13:11:08 by luide-ca         ###   ########.fr       */
+/*   Created: 2024/11/11 15:54:05 by luide-ca          #+#    #+#             */
+/*   Updated: 2024/11/11 15:54:06 by luide-ca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	found_new_line(t_list *list)
 		{
 			if (list->str_buf[i] == '\n')
 				return (1);
-			++i;
+			i++;
 		}
 		list = list->next;
 	}
@@ -47,7 +47,7 @@ int	len_to_new_line(t_list *list)
 		{
 			if (list->str_buf[i] == '\n')
 			{
-				++len;
+				len++;
 				return (len);
 			}
 			++i;
@@ -97,8 +97,6 @@ void	dealloc(t_list **list, t_list *clean_node, char *buf)
 {
 	t_list	*tmp;
 
-	if (NULL == *list)
-		return ;
 	while (*list)
 	{
 		tmp = (*list)->next;
@@ -107,11 +105,12 @@ void	dealloc(t_list **list, t_list *clean_node, char *buf)
 		*list = tmp;
 	}
 	*list = NULL;
-	if (clean_node->str_buf[0])
+	if (clean_node && clean_node->str_buf[0] != '\0')
 		*list = clean_node;
 	else
 	{
 		free(buf);
-		free(clean_node);
+		if (clean_node)
+			free(clean_node);
 	}
 }

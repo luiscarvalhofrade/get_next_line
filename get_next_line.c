@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: luide-ca <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/11 13:10:44 by luide-ca          #+#    #+#             */
-/*   Updated: 2024/11/11 13:10:46 by luide-ca         ###   ########.fr       */
+/*   Created: 2024/11/11 15:53:56 by luide-ca          #+#    #+#             */
+/*   Updated: 2024/11/11 15:53:57 by luide-ca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,9 @@ void	polish_list(t_list **list)
 	last_node = find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last_node->str_buf[i] != '\0'
-		&& last_node->str_buf[i] != '\n')
+	while (last_node->str_buf[i] && last_node->str_buf[i] != '\n')
 		i++;
-	while (last_node->str_buf[i] != '\0'
-		&& last_node->str_buf[++i])
+	while (last_node->str_buf[i] && last_node->str_buf[i++])
 		buf[k++] = last_node->str_buf[i];
 	buf[k] = '\0';
 	clean_node->str_buf = buf;
@@ -82,7 +80,13 @@ void	create_list(t_list **list, int fd)
 		if (!buf)
 			return ;
 		char_read = read(fd, buf, BUFFER_SIZE);
-		if (!char_read)
+		if (char_read == -1)
+		{
+			free(buf);
+			dealloc(list, NULL, NULL);
+			return ;
+		}
+		if (char_read == 0)
 		{
 			free(buf);
 			return ;
@@ -97,12 +101,19 @@ char	*get_next_line(int fd)
 	static t_list	*list = NULL;
 	char			*next_line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
 	create_list(&list, fd);
 	if (!list)
 		return (0);
 	next_line = get_line_db(list);
+	if (!next_line)
+	{
+		dealloc(&list, NULL, NULL);
+		return (0);
+	}
 	polish_list(&list);
+	if (*next_line == '\0')
+		return (free(next_line), NULL);
 	return (next_line);
 }
