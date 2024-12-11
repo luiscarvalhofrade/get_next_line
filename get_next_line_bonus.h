@@ -23,21 +23,18 @@
 
 typedef struct s_list
 {
-	char			*str_buf;
-	struct s_list	*next;
+	char			*content;
+	struct s_list	*next_node;
 }					t_list;
 
-char	*get_line_db(t_list *list);
 char	*get_next_line(int fd);
 
-int		found_new_line(t_list *list);
-int		len_to_new_line(t_list *list);
+int		ft_found_new_line(t_list *list);
+int		ft_len_of_new_line(t_list *list);
 
-void	copy_str(t_list *list, char *str);
-void	create_list(t_list **list, int fd);
-void	dealloc(t_list **list, t_list *clean_node, char *buf);
-void	polish_list(t_list **list);
+void	ft_copy_string(t_list *list, char *str);
+void	ft_free(t_list **list, t_list *clean_node, char *buffer);
 
-t_list	*find_last_node(t_list *list);
+t_list	*ft_find_last_node(t_list *list);
 
 #endif

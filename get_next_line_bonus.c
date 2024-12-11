@@ -12,89 +12,89 @@
 
 #include "get_next_line_bonus.h"
 
-void	polish_list(t_list **list)
+void	ft_reorg_lst(t_list **list)
 {
 	t_list	*last_node;
 	t_list	*clean_node;
 	int		i;
 	int		k;
-	char	*buf;
+	char	*buffer;
 
-	if (list == NULL)
+	if (!list)
 		return ;
-	buf = malloc(BUFFER_SIZE + 1);
+	buffer = malloc(BUFFER_SIZE + 1);
 	clean_node = malloc(sizeof(t_list));
-	if (buf == NULL || clean_node == NULL)
+	if (!buffer || !clean_node)
 		return ;
-	last_node = find_last_node(*list);
+	last_node = ft_find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last_node->str_buf[i] && last_node->str_buf[i] != '\n')
+	while (last_node->content[i] && last_node->content[i] != '\n')
 		i++;
-	while (last_node->str_buf[i] && last_node->str_buf[i++])
-		buf[k++] = last_node->str_buf[i];
-	buf[k] = '\0';
-	clean_node->str_buf = buf;
-	clean_node->next = NULL;
-	dealloc(list, clean_node, buf);
+	while (last_node->content[i] && last_node->content[i++])
+		buffer[k++] = last_node->content[i];
+	buffer[k] = '\0';
+	clean_node->content = buffer;
+	clean_node->next_node = NULL;
+	ft_free(list, clean_node, buffer);
 }
 
-char	*get_line_db(t_list *list)
+char	*ft_get_line(t_list *list)
 {
-	int		str_len;
-	char	*next_str;
+	int		new_line_len;
+	char	*new_line;
 
-	if (list == NULL)
-		return (NULL);
-	str_len = len_to_new_line(list);
-	next_str = malloc(str_len + 1);
-	if (next_str == NULL)
-		return (NULL);
-	copy_str(list, next_str);
-	return (next_str);
+	if (!list)
+		return (0);
+	new_line_len = ft_len_of_new_line(list);
+	new_line = malloc(new_line_len + 1);
+	if (!new_line)
+		return (0);
+	ft_copy_string(list, new_line);
+	return (new_line);
 }
 
-void	append(t_list **list, char *buf, int fd)
+void	ft_append_buffer(t_list **list, char *buffer, int fd)
 {
 	t_list	*new_node;
 	t_list	*last_node;
 
-	last_node = find_last_node(list[fd]);
+	last_node = ft_find_last_node(list[fd]);
 	new_node = malloc(sizeof(t_list));
-	if (new_node == NULL)
+	if (!new_node)
 		return ;
-	if (last_node == NULL)
+	if (!last_node)
 		list[fd] = new_node;
 	else
-		last_node->next = new_node;
-	new_node->str_buf = buf;
-	new_node->next = NULL;
+		last_node->next_node = new_node;
+	new_node->content = buffer;
+	new_node->next_node = NULL;
 }
 
-void	create_list(t_list **list, int fd)
+void	ft_create_lst(t_list **list, int fd)
 {
 	int		char_read;	
-	char	*buf;
+	char	*buffer;
 
-	while (!found_new_line(list[fd]))
+	while (!ft_found_new_line(list[fd]))
 	{
-		buf = malloc(BUFFER_SIZE + 1);
-		if (buf == NULL)
+		buffer = malloc(BUFFER_SIZE + 1);
+		if (!buffer)
 			return ;
-		char_read = read(fd, buf, BUFFER_SIZE);
+		char_read = read(fd, buffer, BUFFER_SIZE);
 		if (char_read == -1)
 		{
-			free(buf);
-			dealloc(&list[fd], NULL, NULL);
+			free(buffer);
+			ft_free(&list[fd], NULL, NULL);
 			return ;
 		}
 		if (char_read == 0)
 		{
-			free(buf);
+			free(buffer);
 			return ;
 		}
-		buf[char_read] = '\0';
-		append(list, buf, fd);
+		buffer[char_read] = '\0';
+		ft_append_buffer(list, buffer, fd);
 	}
 }
 
@@ -104,19 +104,19 @@ char	*get_next_line(int fd)
 	char			*next_line;
 
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
-		return (NULL);
-	create_list(list, fd);
-	if (list[fd] == NULL)
+		return (0);
+	ft_create_lst(list, fd);
+	if (!list[fd])
 	{
-		dealloc(&list[fd], NULL, NULL);
-		return (NULL);
+		ft_free(&list[fd], NULL, NULL);
+		return (0);
 	}
-	next_line = get_line_db(list[fd]);
-	if (next_line == NULL)
+	next_line = ft_get_line(list[fd]);
+	if (!next_line)
 	{
-		dealloc(&list[fd], NULL, NULL);
-		return (NULL);
+		ft_free(&list[fd], NULL, NULL);
+		return (0);
 	}
-	polish_list(&list[fd]);
+	ft_reorg_lst(&list[fd]);
 	return (next_line);
 }
